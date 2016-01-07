@@ -1,0 +1,145 @@
+{
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "boot_command": [
+        "i<tab> inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/fedora-server-23/anaconda-ks.cfg<enter>"
+      ],
+      "disk_size": "{{user `disk_size`}}",
+      "headless": "{{user `headless`}}",
+      "boot_wait": "5s",
+      "guest_os_type": "Fedora_64",
+      "http_directory": "http",
+      "iso_checksum_type": "sha256",
+      "iso_urls": [
+        "iso/Fedora-Server-netinst-x86_64-23.iso",
+        "{{user `mirror`}}/releases/23/Server/x86_64/iso/Fedora-Server-netinst-x86_64-23.iso"
+      ],
+      "iso_checksum": "32e0a15a1c71d0e2fd36a0af5b67a3b3af82976d2dfca0aefcb90d42f2ae6844",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "sudo shutdown -h now",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "{{user `memory`}}"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "{{user `cpus`}}"
+        ]
+      ]
+    },
+    {
+      "type": "vmware-iso",
+      "boot_command": [
+        "i<tab> inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/fedora-server-23/anaconda-ks.cfg<enter>"
+      ],
+      "boot_wait": "5s",
+      "disk_size": "{{user `disk_size`}}",
+      "headless": "{{user `headless`}}",
+      "guest_os_type": "Fedora-64",
+      "http_directory": "http",
+      "iso_checksum_type": "sha256",
+      "iso_urls": [
+        "iso/Fedora-Server-netinst-x86_64-23.iso",
+        "{{user `mirror`}}/releases/23/Server/x86_64/iso/Fedora-Server-netinst-x86_64-23.iso"
+      ],
+      "iso_checksum": "32e0a15a1c71d0e2fd36a0af5b67a3b3af82976d2dfca0aefcb90d42f2ae6844",
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_port": 22,
+      "ssh_wait_timeout": "10000s",
+      "shutdown_command": "sudo shutdown -h now",
+      "tools_upload_flavor": "linux",
+      "disk_type_id": "0",
+      "vmx_data": {
+        "numvcpus": "{{user `cpus`}}",
+        "memsize": "{{user `memory`}}",
+        "ethernet0.virtualdev": "vmxnet3",
+        "scsi0.virtualdev": "pvscsi",
+        "virtualhw.productcompatibility": "hosted",
+        "virtualhw.version": "10",
+        "vcpu.hotadd": "TRUE",
+        "mem.hotadd": "TRUE",
+        "tools.upgrade.policy": "manual",
+        "tools.syncTime": "0",
+        "time.synchronize.continue": "1",
+        "time.synchronize.restore": "1",
+        "time.synchronize.resume.disk": "1",
+        "time.synchronize.shrink": "1",
+        "time.synchronize.tools.startup": "1",
+        "time.synchronize.tools.enable": "1",
+        "time.synchronize.resume.host": "1"
+      }
+    }
+  ],
+  "provisioners": [
+    {
+      "type": "shell",
+      "scripts": [
+        "scripts/vagrant.sh",
+        "scripts/virtualbox.sh",
+        "scripts/vmware.sh"
+      ],
+      "override": {
+        "virtualbox-iso": {
+          "execute_command": "echo 'vagrant'|sudo -S bash '{{.Path}}'"
+        },
+        "vmware-iso": {
+          "execute_command": "echo 'vagrant'|sudo -S bash '{{.Path}}'"
+        }
+      }
+    }
+  ],
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "compression_level": "{{user `compression_level`}}",
+      "output": "fedora-server-23.{{.Provider}}.box"
+    },
+    {
+      "type": "atlas",
+      "only": ["vmware-iso"],
+      "artifact": "{{user `atlas_username`}}/{{user `atlas_name`}}",
+      "artifact_type": "vagrant.box",
+      "metadata": {
+        "provider": "vmware_desktop",
+        "version": "0.0.1"
+      }
+    },
+    {
+      "type": "atlas",
+      "only": ["virtualbox-iso"],
+      "artifact": "{{user `atlas_username`}}/{{user `atlas_name`}}",
+      "artifact_type": "vagrant.box",
+      "metadata": {
+        "provider": "virtualbox",
+        "version": "0.0.1"
+      }
+    }
+  ],
+  "variables": {
+    "compression_level": "9",
+    "cpus": "2",
+    "disk_size": "200000",
+    "headless": "false",
+    "memory": "4096",
+    "mirror": "http://download.fedoraproject.org/pub/fedora/linux",
+    "atlas_username": "{{env `ATLAS_USERNAME`}}",
+    "atlas_name": "{{env `ATLAS_NAME`}}"
+  },
+  "push": {
+    "name": "lohsy/fedora-server-23",
+    "include": [
+      "http/**",
+      "scripts/**"
+    ]
+  }
+}
