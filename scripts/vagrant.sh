@@ -6,3 +6,6 @@ chmod 0600 /home/vagrant/.ssh/authorized_keys
 chown -R vagrant:vagrant /home/vagrant/.ssh
 
 echo 'UseDNS no' >> /etc/ssh/sshd_config
+
+
+sed -i 's/Defaults\s+requiretty//g' /etc/sudoers

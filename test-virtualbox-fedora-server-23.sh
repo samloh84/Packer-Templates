@@ -1,3 +1,4 @@
+#!/bin/bash
 vagrant destroy -f
 rm -rf Vagrantfile
 vagrant init lohsy/fedora-server-23
