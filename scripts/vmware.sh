@@ -1,9 +1,15 @@
 #!/bin/bash
 
-# Bail if we are not running inside VMWare.
+echo "Installing VMWare Guest Additions"
+echo "Running: $(facter virtual)"
+
+# Bail if we are not running inside VirtualBox.
 if [[ `facter virtual` != "vmware" ]]; then
-    exit 0
+	echo "Not Installing VMWare Guest Additions"
+	exit 0
 fi
+
+echo "Proceed to install VMWare Guest Additions"
 
 if [[ -n "$(type -P apt-get)" ]]; then
  # Debian and derivatives
@@ -31,4 +37,6 @@ sed -i.bak 's/answer AUTO_KMODS_ENABLED_ANSWER no/answer AUTO_KMODS_ENABLED_ANSW
 sed -i.bak 's/answer AUTO_KMODS_ENABLED no/answer AUTO_KMODS_ENABLED yes/g' /etc/vmware-tools/locations
 
 vmware-config-tools.pl -d
+
+rm -rf /home/vagrant/linux.iso
 

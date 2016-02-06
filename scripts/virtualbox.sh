@@ -1,11 +1,16 @@
 #!/bin/bash -x -e
 
+echo "Installing VirtualBox Guest Additions"
+echo "Running: $(facter virtual)"
+
 # Bail if we are not running inside VirtualBox.
 if [[ `facter virtual` == "vmware" ]]; then
+	echo "Not Installing VirtualBox Guest Additions"
 	exit 0
 fi
 
-echo "Running Virtualbox."
+echo "Proceed to install VirtualBox Guest Additions"
+
 
 if [[ -n "$(type -P apt-get)" ]]; then
  # Debian and derivatives

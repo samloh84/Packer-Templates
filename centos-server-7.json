@@ -3,7 +3,7 @@
     {
       "type": "virtualbox-iso",
       "boot_command": [
-        "i<tab> inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-7/anaconda-ks.cfg<enter>"
+        "i<tab> inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-server-7/anaconda-ks.cfg<enter>"
       ],
       "disk_size": "{{user `disk_size`}}",
       "headless": "{{user `headless`}}",
@@ -39,7 +39,7 @@
     {
       "type": "vmware-iso",
       "boot_command": [
-        "i<tab> inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-7/anaconda-ks.cfg<enter>"
+        "i<tab> inst.ks=http://{{.HTTPIP}}:{{.HTTPPort}}/centos-server-7/anaconda-ks.cfg<enter>"
       ],
       "boot_wait": "5s",
       "disk_size": "{{user `disk_size`}}",
@@ -103,7 +103,17 @@
     {
       "type": "vagrant",
       "compression_level": "{{user `compression_level`}}",
-      "output": "centos-7.{{.Provider}}.box"
+      "output": "centos-server-7.{{.Provider}}.box"
+    },
+    {
+      "type": "atlas",
+      "token": "{{user `atlas_token`}}",
+      "artifact": "lohsy/centos-server-7",
+      "artifact_type": "vagrant.box",
+      "metadata": {
+        "provider": "{{.Provider}}",
+        "created_at": "{{timestamp}}"
+      }
     }
   ],
   "variables": {
@@ -112,12 +122,12 @@
     "disk_size": "200000",
     "headless": "false",
     "memory": "4096",
-    "mirror": "http://isoredirect.centos.org/centos",
+    "mirror": "http://centos.usonyx.net/main",
     "atlas_username": "{{env `ATLAS_USERNAME`}}",
     "atlas_name": "{{env `ATLAS_NAME`}}"
   },
   "push": {
-    "name": "lohsy/centos-7",
+    "name": "lohsy/centos-server-7",
     "include": [
       "http/**",
       "scripts/**"
