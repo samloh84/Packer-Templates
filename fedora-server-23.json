@@ -104,22 +104,12 @@
       "type": "vagrant",
       "compression_level": "{{user `compression_level`}}",
       "output": "fedora-server-23.{{.Provider}}.box"
-    },
-    {
-      "type": "atlas",
-      "token": "{{user `atlas_token`}}",
-      "artifact": "lohsy/fedora-server-23",
-      "artifact_type": "vagrant.box",
-      "metadata": {
-        "provider": "{{.Provider}}",
-        "created_at": "{{timestamp}}"
-      }
     }
   ],
   "variables": {
     "compression_level": "9",
     "cpus": "2",
-    "disk_size": "200000",
+    "disk_size": "204800",
     "headless": "false",
     "memory": "4096",
     "mirror": "http://download.fedoraproject.org/pub/fedora/linux",
